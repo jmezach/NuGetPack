@@ -144,12 +144,22 @@ namespace OctoPack.Tasks
                         LogMessage("Add binary files to the bin folder", MessageImportance.Normal);
                         AddFiles(specFile, binaries, OutDir, "bin");
                     }
-                    else
+                    else if (IsExecutable())
                     {
                         LogMessage("Packaging a console or Window Service application");
 
                         LogMessage("Add binary files", MessageImportance.Normal);
                         AddFiles(specFile, binaries, OutDir);
+                    }
+                    else
+                    {
+                        LogMessage("Packaging a class library");
+
+                        var primaryAssemblyFile = new FileInfo(PrimaryOutputAssembly);
+                        var primaryAssemblyName = primaryAssemblyFile.Name.Replace(primaryAssemblyFile.Extension, string.Empty);
+
+                        LogMessage("Adding primary output assembly", MessageImportance.Normal);
+                        AddFiles(specFile, binaries.Where(binary => binary.Contains(primaryAssemblyName)), OutDir);
                     }
                 }
 
@@ -348,6 +358,11 @@ namespace OctoPack.Tasks
         private bool IsWebApplication()
         {
             return fileSystem.FileExists("web.config");
+        }
+
+        private bool IsExecutable()
+        {
+            return PrimaryOutputAssembly.EndsWith(".exe");
         }
         
         private void Copy(IEnumerable<string> sourceFiles, string baseDirectory, string destinationDirectory)

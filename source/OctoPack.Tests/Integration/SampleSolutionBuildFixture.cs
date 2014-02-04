@@ -128,6 +128,18 @@ namespace OctoPack.Tests.Integration
         }
 
         [Test]
+        public void ShouldPackagePrimaryOutputAssemblyOnly()
+        {
+            MsBuild("Sample.ClassLibrary\\Sample.ClassLibrary.csproj /p:RunOctoPack=true /p:OctoPackPackageVersion=1.0.9 /p:Configuration=Release");
+
+            AssertPackage(@"Sample.ClassLibrary\obj\octopacked\Sample.ClassLibrary.1.0.9.nupkg",
+                pkg => pkg.AssertContents(
+                    "Sample.ClassLibrary.dll",
+                    "Sample.ClassLibrary.pdb"
+                ));
+        }
+
+        [Test]
         public void ShouldAllowCustomFilesSection()
         {
             MsBuild("Sample.WebAppWithSpecAndCustomContent\\Sample.WebAppWithSpecAndCustomContent.csproj /p:RunOctoPack=true /p:OctoPackPackageVersion=1.0.11 /p:Configuration=Release");

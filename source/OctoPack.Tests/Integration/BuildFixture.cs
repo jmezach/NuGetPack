@@ -53,6 +53,11 @@ namespace OctoPack.Tests.Integration
                 Trace.WriteLine(output);
             };
 
+            if (!commandLineArguments.Contains("/toolsversion"))
+            {
+                commandLineArguments = commandLineArguments + " /toolsversion:\"12.0\"";
+            }
+
             var result = SilentProcessRunner.ExecuteCommand(msBuild, commandLineArguments, Environment.CurrentDirectory, writer, e => writer("ERROR: " + e));
 
             if (result != 0)
