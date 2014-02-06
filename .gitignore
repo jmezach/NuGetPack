@@ -55,4 +55,5 @@ build
 tools/TestResult.xml
 packages
 source/Samples/Notes.txt
-source/Samples/.octopack
+source/Samples/.nugetpack
+pkg

@@ -264,5 +264,5 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
-  <Import Project="..\.octopack\Octopack.targets" />
+  <Import Project="..\.nugetpack\NuGetPack.targets" />
 </Project>

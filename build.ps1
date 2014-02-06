@@ -1,4 +1,4 @@
-## This is the OctoPack build script, written in PSAKE. Run with 
+## This is the NuGetPack build script, written in PSAKE. Run with 
 ## 
 ##   Import-Module .\tools\psake\psake.psm1
 ##   Invoke-psake .\build.ps1
@@ -7,7 +7,7 @@
 Framework "4.0"
 
 properties {
-	$build_number = "2.1.26"
+	$build_number = "1.0.0"
     $configuration = "Release"
     $nuget_path = "tools\nuget.exe"
 }
@@ -30,21 +30,21 @@ task Versions {
 	write-host "Apply version stamp"
 	
 	Generate-Assembly-Info `
-        -file "source\OctoPack.Tasks\Properties\AssemblyInfo.cs" `
-        -title "OctoPack Tasks $build_number" `
-        -description "MSBuild tasks for OctoPack" `
-        -company "Octopus Deploy Pty. Ltd." `
-        -product "OctoPack $build_number" `
+        -file "source\NuGetPack.Tasks\Properties\AssemblyInfo.cs" `
+        -title "NuGetPack Tasks $build_number" `
+        -description "MSBuild tasks for NuGetPack" `
+        -company "" `
+        -product "NuGetPack $build_number" `
         -clsCompliant false `
         -version $build_number `
-        -copyright "Octopus Deploy Pty. Ltd. 2011 - 2012"	
+        -copyright ""	
 }
 
 task Build -depends Clean, Versions {
 	write-host "Build"
     
     exec {
-        msbuild .\source\OctoPack.sln /p:Configuration=$configuration /t:Build
+        msbuild .\source\NuGetPack.sln /p:Configuration=$configuration /t:Build
     }
 }
 
@@ -58,17 +58,17 @@ task Package -depends Build {
     mkdir .\build\content
     mkdir .\build\targets
     mkdir .\build\tools
-    dir -recurse .\source\OctoPack.Tasks\bin\$configuration | copy -destination build\targets
+    dir -recurse .\source\NuGetPack.Tasks\bin\$configuration | copy -destination build\targets
     dir -recurse .\source\targets | copy -destination build\targets
     dir -recurse .\source\tools | copy -destination build\tools
     dir -recurse .\source\content | copy -destination build\content
-    Copy-Item .\source\OctoPack.nuspec .\build 
+    Copy-Item .\source\NuGetPack.nuspec .\build 
     Copy-Item .\source\tools\NuGet.exe .\build\targets
 
     $base = (resolve-path "build")
     write-host $base
 	exec {
-        & $nuget_path pack build\OctoPack.nuspec -basepath $base -outputdirectory $base -version $build_number -NoPackageAnalysis
+        & $nuget_path pack build\NuGetPack.nuspec -basepath $base -outputdirectory $base -version $build_number -NoPackageAnalysis
     }	
 }
 

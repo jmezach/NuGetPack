@@ -4,7 +4,7 @@ Import-Module (Join-Path $toolsPath "MSBuild.psm1")
 
 function Delete-Temporary-File 
 {
-    $project.ProjectItems | Where-Object { $_.Name -eq 'OctoPack-Readme.txt' } | Foreach-Object {
+    $project.ProjectItems | Where-Object { $_.Name -eq 'NuGetPack-Readme.txt' } | Foreach-Object {
         Remove-Item ( $_.FileNames(0) )
         $_.Remove() 
     }
@@ -37,7 +37,7 @@ function Install-Targets ( $project, $importFile )
 {
     $buildProject = Get-MSBuildProject $project.Name
 
-    $buildProject.Xml.Imports | Where-Object { $_.Project -match "OctoPack" } | foreach-object {     
+    $buildProject.Xml.Imports | Where-Object { $_.Project -match "NuGetPack" } | foreach-object {     
         Write-Host ("Removing old import:      " + $_.Project)
         $buildProject.Xml.RemoveChild($_) 
     }
@@ -50,35 +50,53 @@ function Install-Targets ( $project, $importFile )
     $project.Save()
 }
 
-function Get-OctoPackTargetsPath ($project) {
+function Get-NuGetPackTargetsPath ($project) {
     $projectItem = Get-ChildItem $project.FullName
-    $importFile = Join-Path $toolsPath "..\targets\OctoPack.targets"
+    $importFile = Join-Path $toolsPath "..\targets\NuGetPack.targets"
     $importFile = Resolve-Path $importFile
     $importFile = Get-RelativePath $projectItem.Directory $importFile 
     return $importFile
 }
 
-function Copy-OctoPackTargetsToSolutionRoot($project) {
+function Copy-NuGetPackTargetsToSolutionRoot($project) {
     $solutionDir = Get-SolutionDir
-    $octopackFolder = (Join-Path $solutionDir .octopack)
+    $nupackFolder = (Join-Path $solutionDir .nugetpack)
 
     # Get the target file's path
     $targetsFolder = Join-Path $toolsPath "..\targets" | Resolve-Path
     
-    if(!(Test-Path $octopackFolder)) {
-        mkdir $octopackFolder | Out-Null
+    if(!(Test-Path $nugetpackFolder)) {
+        mkdir $nugetpackFolder | Out-Null
     }
 
-    $octopackFolder = resolve-path $octopackFolder
+    $nugetpackFolder = resolve-path $nugetpackFolder
 
-    Write-Host "Copying OctoPack MSBuild targets to: $octopackFolder"
+    Write-Host "Copying NuGetPack MSBuild targets to: $nugetpackFolder"
 
-    Copy-Item "$targetsFolder\*.*" $octopackFolder -Force | Out-Null
+    Copy-Item "$targetsFolder\*.*" $nugetpackFolder -Force | Out-Null
 
-    Write-Host "IMPORTANT: You must commit/check in the .octopack folder to your source control system"
+    Write-Host "IMPORTANT: You must commit/check in the .nugetpack folder to your source control system"
 
     $projectItem = Get-ChildItem $project.FullName
-    return '$(SolutionDir)\.octopack\OctoPack.targets'
+    return '$(SolutionDir)\.nugetpack\NuGetPack.targets'
+}
+
+function Generate-NuSpecFile($project, $toolsPath) {
+    # Get the path to NuGet and to the project
+    $nugetPath = Join-Path $toolsPath "\NuGet.exe" | Resolve-Path
+    $projectPath = Split-Path $project.FullName -parent
+
+    Write-Host "Generating NuSpec file for: $($project.Name)"
+
+    cd $projectPath
+    $output = & "$nugetPath" spec $($project.Name) -NonInteractive
+    Write-Host $output
+    cd ..
+
+    # Get the path to the generated NuSpec file
+    $nugetSpecPath = Join-Path $projectPath ($project.Name + ".nuspec")
+
+    $project.ProjectItems.AddFromFile($nugetSpecPath)
 }
 
 function Main 
@@ -90,16 +108,18 @@ function Main
     $importFile = ''
 
     if($addToSolution){
-        Write-Host "NuGet package restore is enabled. Adding OctoPack to the solution directory."
-        $importFile = Copy-OctoPackTargetsToSolutionRoot $project
+        Write-Host "NuGet package restore is enabled. Adding NuGetPack to the solution directory."
+        $importFile = Copy-NuGetPackTargetsToSolutionRoot $project
     } else {
-        Write-Host "NuGet package restore is not enabled. Adding OctoPack from the package directory."
-        $importFile = Get-OctoPackTargetsPath $project
+        Write-Host "NuGet package restore is not enabled. Adding NuGetPack from the package directory."
+        $importFile = Get-NuGetPackTargetsPath $project
     }
 
     Install-Targets $project $importFile
 
-    Write-Host ("OctoPack installed successfully")
+    Generate-NuSpecFile $project $toolsPath
+
+    Write-Host ("NuGetPack installed successfully")
 }
 
 Main

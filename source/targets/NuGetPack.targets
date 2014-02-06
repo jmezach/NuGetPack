@@ -1,0 +1,94 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="NuGetPack.Tasks.FindNuGet" AssemblyFile="NuGetPack.Tasks.dll" />
+
+  <!-- Hook into the AfterBuild activity -->
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      NuGetPack
+    </BuildDependsOn>
+  </PropertyGroup>
+  
+  <!--
+  Configuration properties - you can override these from the command line
+  -->
+  <PropertyGroup>
+    <RunNuGetPack Condition="'$(RunNuGetPack)'==''">false</RunNuGetPack>
+    
+    <NuGetPackNuSpecFileName Condition="'$(NuGetPackNuSpecFileName)' == ''"></NuGetPackNuSpecFileName>
+    <NuGetPackNuGetExePath Condition="'$(NuGetPackNuGetExePath)' == ''"></NuGetPackNuGetExePath>
+    <NuGetPackPublishPackageToFileShare Condition="'$(NuGetPackPublishPackageToFileShare)' == ''"></NuGetPackPublishPackageToFileShare>
+    <NuGetPackPublishPackageToHttp Condition="'$(NuGetPackPublishPackageToHttp)' == ''"></NuGetPackPublishPackageToHttp>
+    <NuGetPackPublishApiKey Condition="'$(NuGetPackPublishApiKey)' == ''"></NuGetPackPublishApiKey>
+    <NuGetPackNuGetProperties Condition="'$(NuGetPackNugetProperties)' == ''"></NuGetPackNuGetProperties>
+    <NuGetPackPackageFolder Condition="'$(NuGetPackPackageFolder)' == ''"></NuGetPackPackageFolder>
+    <NuGetPackSymbolsPackage Condition="'$(NuGetPackSymbolsPackage)' == ''">false</NuGetPackSymbolsPackage>
+    <NuGetPackIncludeReferencedProjects Condition="'$(NuGetPackIncludeReferencedProjects)' == ''">false</NuGetPackIncludeReferencedProjects>
+  
+  </PropertyGroup>
+
+  <!-- 
+  Create NuGet package
+  -->
+  <Target Name="NuGetPack" Condition="$(RunNuGetPack)">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyIdentities"/>
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <NuGetPackPackageVersion Condition="'$(NuGetPackPackageVersion)' == ''">%(AssemblyIdentities.Version)</NuGetPackPackageVersion>
+    </PropertyGroup>
+    <PropertyGroup>
+      <NuGetPackPackageVersion Condition="'$(NuGetPackPackageVersion)' == ''"><!-- Use the value from nuspec, or 1.0.0 if not in NuSpec --></NuGetPackPackageVersion>
+    </PropertyGroup>
+    <PropertyGroup>
+      <NuGetPackNuGetProperties>Configuration=$(Configuration);$(NuGetPackNuGetProperties)</NuGetPackNuGetProperties>
+    </PropertyGroup>
+    <PropertyGroup>
+      <NuGetPackPackageFolder Condition="'$(NuGetPackPackageFolder)' == ''">$(MSBuildProjectDirectory)\pkg</NuGetPackPackageFolder>
+    </PropertyGroup>
+    <ItemGroup>
+      <OutputAssembly Include="$(TargetPath)" />
+    </ItemGroup>
+    <PropertyGroup>
+      <NuGetPackNuSpecFile Condition="'$(NuGetPackNuSpecFile)' == ''">$(MSBuildProjectDirectory)\%(OutputAssembly.Filename).nuspec</NuGetPackNuSpecFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <OutputPackage Include="$(NuGetPackNuSpecFile)" />
+    </ItemGroup>
+    <PropertyGroup>
+      <NuGetPackPackageFile>$(NuGetPackPackageFolder)\%(OutputPackage.Filename).$(NuGetPackPackageVersion).nupkg</NuGetPackPackageFile>
+    </PropertyGroup>
+    <PropertyGroup>
+      <CreateSymbolsPackage Condition="$(NuGetPackSymbolsPackage)">-Symbols</CreateSymbolsPackage>
+      <IncludeReferencedProjects Condition="$(NuGetPackIncludeReferencedProjects)">-IncludeReferencedProjects</IncludeReferencedProjects>
+    </PropertyGroup>
+
+    <FindNuGet
+      NuGetExePath="$(NuGetPackNuGetExePath)">
+      <Output TaskParameter="NuGetExePath" PropertyName="NuGetPackNuGetExePath" />
+    </FindNuGet>
+
+    <Message Text="Using NuGet.exe from: $(NuGetPackNuGetExePath)" />
+    <Message Text="Using package version: $(NuGetPackPackageVersion)" />
+    <Message Text="Creating symbols package: $(CreateSymbolsPackage)" />
+    <Message Text="Including reference projects: $(IncludeReferencedProjects)" />
+    
+    <Message Text="Deleting exiting package folder: $(NuGetPackPackageFolder)" Condition="Exists('$(NuGetPackPackageFolder')" />
+    <RemoveDir Directories="$(NuGetPackPackageFolder)" Condition="Exists('$(NuGetPackPackageFolder)')"/> 
+    <Message Text="Creating package folder: $(NuGetPackPackageFolder)" />
+    <MakeDir Directories="$(NuGetPackPackageFolder)" />
+    
+    <Warning Text="Generating NuSpec file for project: $(MSBuildProjectFile). You should create your own." Condition="!Exists('$(NuGetPackNuSpecFile)')" />
+    <Exec Command='"$(NuGetPackNuGetExePath)" spec "$(MSBuildProjectFile)" -NonInteractive' Condition="!Exists('$(NuGetPackNuSpecFile)')" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    
+    <Message Text="Creating NuGet package from: $(MSBuildProjectFile)" />
+    <Exec Command='"$(NuGetPackNuGetExePath)" pack "$(MSBuildProjectFile)" -OutputDirectory "$(NuGetPackPackageFolder)" -BasePath "$(MSBuildProjectDirectory)" -Version "$(NuGetPackPackageVersion)" $(CreateSymbolsPackage) $(IncludeReferencedProjects) -Properties "$(NuGetPackNuGetProperties)" -NonInteractive' WorkingDirectory='$(MSBuildProjectDirectory)' />
+
+    <Message Text="Publish to file share: $(NuGetPackPublishPackageToFileShare)" Condition="'$(NuGetPackPublishPackageToFileShare)' != ''" Importance="Normal" />
+    <Copy SourceFiles="$(NuGetPackPackageFile)" DestinationFolder="$(NuGetPackPublishPackageToFileShare)" Condition="'$(NuGetPackPublishPackageToFileShare)' != ''" />
+
+    <Message Text="Publish to repository: $(NuGetPackPublishPackageToHttp)" Condition="'$(NuGetPackPublishPackageToHttp)' != ''" Importance="Normal" />
+    <Exec Command='"$(NuGetPackPackageFile)" push "$(NuGetPackPackageFile)" $(NuGetPackPublishApiKey) -s $(NuGetPackPublishPackageToHttp)' Condition="'$(NuGetPackPublishPackageToHttp)' != ''" />
+
+  </Target>
+</Project>
