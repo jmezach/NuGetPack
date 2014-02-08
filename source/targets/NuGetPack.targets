@@ -88,7 +88,7 @@
     <Copy SourceFiles="$(NuGetPackPackageFile)" DestinationFolder="$(NuGetPackPublishPackageToFileShare)" Condition="'$(NuGetPackPublishPackageToFileShare)' != ''" />
 
     <Message Text="Publish to repository: $(NuGetPackPublishPackageToHttp)" Condition="'$(NuGetPackPublishPackageToHttp)' != ''" Importance="Normal" />
-    <Exec Command='"$(NuGetPackPackageFile)" push "$(NuGetPackPackageFile)" $(NuGetPackPublishApiKey) -s $(NuGetPackPublishPackageToHttp)' Condition="'$(NuGetPackPublishPackageToHttp)' != ''" />
+    <Exec Command='"$(NuGetPackNuGetExePath)" push "$(NuGetPackPackageFile)" $(NuGetPackPublishApiKey) -s $(NuGetPackPublishPackageToHttp)' Condition="'$(NuGetPackPublishPackageToHttp)' != ''" />
 
   </Target>
 </Project>

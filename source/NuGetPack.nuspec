@@ -11,6 +11,7 @@
     <projectUrl>https://github.com/jmezach/NuGetPack</projectUrl>
     <iconUrl>http://i.octopusdeploy.com/resources/Avatar3-32x32.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
     <description>
       This packages adds the ability to automatically create NuGet packages from your projects and publish them to a NuGet feed.
     </description>
