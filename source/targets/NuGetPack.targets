@@ -41,7 +41,7 @@
       <NuGetPackPackageVersion Condition="'$(NuGetPackPackageVersion)' == ''"><!-- Use the value from nuspec, or 1.0.0 if not in NuSpec --></NuGetPackPackageVersion>
     </PropertyGroup>
     <PropertyGroup>
-      <NuGetPackNuGetProperties>Configuration=$(Configuration);$(NuGetPackNuGetProperties)</NuGetPackNuGetProperties>
+      <NuGetPackNuGetProperties>Configuration=$(Configuration);Outdir=$(OutDir);$(NuGetPackNuGetProperties)</NuGetPackNuGetProperties>
     </PropertyGroup>
     <PropertyGroup>
       <NuGetPackPackageFolder Condition="'$(NuGetPackPackageFolder)' == ''">$(MSBuildProjectDirectory)\pkg</NuGetPackPackageFolder>
