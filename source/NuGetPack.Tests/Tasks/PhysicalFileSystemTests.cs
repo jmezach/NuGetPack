@@ -4,7 +4,7 @@ using NuGetPack.Tasks.Util;
 namespace NuGetPack.Tests.Tasks
 {
     [TestFixture]
-    public class OctopusPhysicalFileSystemTests
+    public class PhysicalFileSystemTests
     {
         [Test]
         public void GetRelativePathTo_ShouldResolveCorrectPathForRegularContentFiles()

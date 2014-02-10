@@ -7,8 +7,8 @@
     <ProjectGuid>{2AAFB125-1A9F-45E6-A11C-770132432F16}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OctoPack.Tests</RootNamespace>
-    <AssemblyName>OctoPack.Tests</AssemblyName>
+    <RootNamespace>NuGetPack.Tests</RootNamespace>
+    <AssemblyName>NuGetPack.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -52,7 +52,7 @@
     <Compile Include="Integration\BuildFixture.cs" />
     <Compile Include="Integration\SampleSolutionBuildFixture.cs" />
     <Compile Include="Util\ZipPackageExtensions.cs" />
-    <Compile Include="Tasks\OctopusPhysicalFileSystemTests.cs" />
+    <Compile Include="Tasks\PhysicalFileSystemTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
