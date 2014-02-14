@@ -7,7 +7,7 @@
 Framework "4.0"
 
 properties {
-	$build_number = "1.0.1"
+	$build_number = "1.0.2"
     $configuration = "Release"
     $nuget_path = "tools\nuget.exe"
 }

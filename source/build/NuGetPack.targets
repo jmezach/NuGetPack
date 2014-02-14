@@ -53,11 +53,8 @@
     <PropertyGroup>
       <NuGetPackNuSpecFile Condition="'$(NuGetPackNuSpecFile)' == ''">$(MSBuildProjectDirectory)\%(ProjectFile.Filename).nuspec</NuGetPackNuSpecFile>
     </PropertyGroup>
-    <ItemGroup>
-      <OutputPackage Include="$(NuGetPackNuSpecFile)" />
-    </ItemGroup>
     <PropertyGroup>
-      <NuGetPackPackageFile>$(NuGetPackPackageFolder)\%(OutputPackage.Filename).$(NuGetPackPackageVersion).nupkg</NuGetPackPackageFile>
+      <NuGetPackPackageFile>$(NuGetPackPackageFolder)\%(OutputAssembly.Filename).$(NuGetPackPackageVersion).nupkg</NuGetPackPackageFile>
     </PropertyGroup>
     <PropertyGroup>
       <CreateSymbolsPackage Condition="$(NuGetPackSymbolsPackage)">-Symbols</CreateSymbolsPackage>
