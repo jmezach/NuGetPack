@@ -47,10 +47,11 @@
       <NuGetPackPackageFolder Condition="'$(NuGetPackPackageFolder)' == ''">$(MSBuildProjectDirectory)\pkg</NuGetPackPackageFolder>
     </PropertyGroup>
     <ItemGroup>
-      <OutputAssembly Include="$(MSBuildProjectFile)" />
+	  <ProjectFile Include="$(MSBuildProjectFile)" />
+      <OutputAssembly Include="$(TargetPath)" />
     </ItemGroup>
     <PropertyGroup>
-      <NuGetPackNuSpecFile Condition="'$(NuGetPackNuSpecFile)' == ''">$(MSBuildProjectDirectory)\%(OutputAssembly.Filename).nuspec</NuGetPackNuSpecFile>
+      <NuGetPackNuSpecFile Condition="'$(NuGetPackNuSpecFile)' == ''">$(MSBuildProjectDirectory)\%(ProjectFile.Filename).nuspec</NuGetPackNuSpecFile>
     </PropertyGroup>
     <ItemGroup>
       <OutputPackage Include="$(NuGetPackNuSpecFile)" />
