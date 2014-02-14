@@ -51,7 +51,7 @@ hgignore[.-]*
 ignore[.-]*
 svnignore[.-]*
 lint.db
-build
+/build
 tools/TestResult.xml
 packages
 source/Samples/Notes.txt
