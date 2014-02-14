@@ -55,7 +55,7 @@
     <Compile Include="Util\XmlElementExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\targets\NuGetPack.targets">
+    <None Include="..\build\NuGetPack.targets">
       <Link>NuGetPack.targets</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>

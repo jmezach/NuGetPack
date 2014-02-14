@@ -18,7 +18,7 @@ function Uninstall-Targets ( $project )
 
 function Main 
 {
-    Uninstall-Targets $project
+    #Uninstall-Targets $project
 
     Write-Host ("NuGetPack uninstalled successfully")
 }

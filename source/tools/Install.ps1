@@ -103,19 +103,19 @@ function Main
 {
     Delete-Temporary-File
 
-    $addToSolution = (Get-MSBuildProperty RestorePackages $project.Name).EvaluatedValue
+    #$addToSolution = (Get-MSBuildProperty RestorePackages $project.Name).EvaluatedValue
 
-    $importFile = ''
+    #$importFile = ''
 
-    if($addToSolution){
-        Write-Host "NuGet package restore is enabled. Adding NuGetPack to the solution directory."
-        $importFile = Copy-NuGetPackTargetsToSolutionRoot $project
-    } else {
-        Write-Host "NuGet package restore is not enabled. Adding NuGetPack from the package directory."
-        $importFile = Get-NuGetPackTargetsPath $project
-    }
+    #if($addToSolution){
+    #    Write-Host "NuGet package restore is enabled. Adding NuGetPack to the solution directory."
+    #    $importFile = Copy-NuGetPackTargetsToSolutionRoot $project
+    #} else {
+    #    Write-Host "NuGet package restore is not enabled. Adding NuGetPack from the package directory."
+    #    $importFile = Get-NuGetPackTargetsPath $project
+    #}
 
-    Install-Targets $project $importFile
+    #Install-Targets $project $importFile
 
     Generate-NuSpecFile $project $toolsPath
 

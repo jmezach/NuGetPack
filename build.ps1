@@ -7,7 +7,7 @@
 Framework "4.0"
 
 properties {
-	$build_number = "1.0.0"
+	$build_number = "1.0.1"
     $configuration = "Release"
     $nuget_path = "tools\nuget.exe"
 }
@@ -56,14 +56,14 @@ task Package -depends Build {
 	write-host "Package"
 
     mkdir .\build\content
-    mkdir .\build\targets
+    mkdir .\build\build
     mkdir .\build\tools
-    dir -recurse .\source\NuGetPack.Tasks\bin\$configuration | copy -destination build\targets
-    dir -recurse .\source\targets | copy -destination build\targets
+    dir -recurse .\source\NuGetPack.Tasks\bin\$configuration | copy -destination build\build
+    dir -recurse .\source\build | copy -destination build\build
     dir -recurse .\source\tools | copy -destination build\tools
     dir -recurse .\source\content | copy -destination build\content
     Copy-Item .\source\NuGetPack.nuspec .\build 
-    Copy-Item .\source\tools\NuGet.exe .\build\targets
+    Copy-Item .\source\tools\NuGet.exe .\build\build
 
     $base = (resolve-path "build")
     write-host $base
